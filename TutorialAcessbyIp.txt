@@ -1,0 +1,17 @@
+1 - Abra o CMD e digite "ipconfig", pega o ipv4.
+
+2 - abrir o Powershell como Administrador e executar o seguinte comando:
+
+netsh advfirewall firewall add rule name="ASP.NET Core" dir=in action=allo protocol=TCP localport=5172
+
+Esse comando cria uma regra de entrada no firewall do Windows, permitindo conexões TCP vindas de fora para a porta 5172, onde está rodando a aplicação ASP.NET Core.
+
+3 - mudar o endereço http e https do "launchSettings.json" colocando 0.0.0.0:5172 (ou qualquer outra porta).
+
+* verificar se possui algum endereço "localhost" ou outros nas páginas html. Se não, não comunica com o banco.
+
+4 - Rodar a aplicação.
+
+5 - acessar a página através do IPv4:Porta
+
+exemplo: 192.168.1.10:5172.

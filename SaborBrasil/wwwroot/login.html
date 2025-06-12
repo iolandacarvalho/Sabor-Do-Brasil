@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sabor do Brasil</title>
+    <style>
+        :root {
+            --primary-color: #D97014;
+            --secondary-color: #C2BEBE;
+            --text-color: #333;
+            --light-color: #f5f5f5;
+            --white: #fff;
+            --error-color: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--secondary-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(217, 112, 20, 0.2);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: #c05e0c;
+        }
+        
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .alert-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+        }
+        
+        .alert-success {
+            background-color: rgba(25, 135, 84, 0.1);
+            border: 1px solid #198754;
+            color: #198754;
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-color);
+        }
+        
+        .register-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">Sabor do Brasil</div>
+        <h1>Faça login na sua conta</h1>
+        
+        <div id="message" class="alert" style="display: none;"></div>
+        
+        <form id="login-form" method="POST" action="/Usuario/Login">
+            <div class="form-group">
+                <label for="Email">E-mail</label>
+                <input type="email" id="Email" name="Email" class="form-control" required>
+            </div>
+            
+            <div class="form-group" style="position: relative;">
+                <label for="Senha">Senha</label>
+                <input type="password" id="Senha" name="Senha" class="form-control" required style="padding-right: 38px;">
+                <span id="toggleSenhaLogin" style="position:absolute; right:12px; top:38px; cursor:pointer; color:#888; font-size:1.2rem;">
+                    <i class="fa-regular fa-eye" id="login-eye"></i>
+                </span>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+        
+        <div class="register-link">
+            Não tem uma conta? <a href="/Cadastro.html">Cadastre-se</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('Email').value;
+            const senha = document.getElementById('Senha').value;
+            
+            const messageDiv = document.getElementById('message');
+            messageDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('http://localhost:5172/Usuario/Login', { // Ajuste a porta se necessário
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        Email: email,
+                        Senha: senha
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Login bem-sucedido
+                    messageDiv.textContent = 'Login realizado com sucesso! Redirecionando...';
+                    messageDiv.className = 'alert alert-success';
+                    messageDiv.style.display = 'block';
+
+                    // Armazenar o estado de login no localStorage
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userId', data.idusuario);
+                    localStorage.setItem("userName", data.nome);
+                    localStorage.setItem("userPhoto", data.fotoPerfil || "");
+
+                    // Pegue o returnUrl da URL, se existir
+                    const params = new URLSearchParams(window.location.search);
+                    const returnUrl = params.get('returnUrl');
+
+                    setTimeout(() => {
+                        if (returnUrl) {
+                            window.location.href = returnUrl;
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                    }, 1000);
+                } else {
+                    // Exibir mensagem de erro
+                    messageDiv.textContent = data.message || 'Erro ao fazer login';
+                    messageDiv.className = 'alert alert-error';
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                messageDiv.textContent = 'Erro ao conectar com o servidor';
+                messageDiv.className = 'alert alert-error';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        document.getElementById('toggleSenhaLogin').addEventListener('click', function() {
+            const senhaInput = document.getElementById('Senha');
+            const eyeIcon = document.getElementById('login-eye');
+            if (senhaInput.type === "password") {
+                senhaInput.type = "text";
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                senhaInput.type = "password";
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalhes do Prato - Sabor do Brasil</title>
+    <style>
+      :root {
+        --primary-color: #d97014;
+        --secondary-color: #c2bebe;
+        --text-color: #333;
+        --light-color: #f5f5f5;
+        --white: #fff;
+        --error-color: #dc3545;
+        --dark-gray: #555;
+        --light-gray: #eee;
+      }
+      body {
+        background: var(--light-color);
+        color: var(--text-color);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .navbar {
+        background: var(--primary-color);
+        color: var(--white);
+        padding: 1.2rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+      .navbar .logo {
+        font-size: 2rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+      }
+      .navbar .nav-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+      .navbar button,
+      .navbar .home-btn {
+        background: var(--white);
+        color: var(--primary-color);
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background 0.2s, color 0.2s;
+        text-decoration: none;
+      }
+      .navbar button:hover,
+      .navbar .home-btn:hover {
+        background: var(--primary-color);
+        color: var(--white);
+      }
+      .navbar .home-btn {
+        padding: 0.6rem 1.2rem;
+      }
+      .container {
+        max-width: 1400px; /* aumente a largura máxima */
+        min-width: 1100px; /* largura mínima para manter o padrão */
+        margin: 40px auto;
+        background: var(--white);
+        border-radius: 18px;
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem 2.5rem 2rem 2.5rem;
+        flex: 1 0 auto;
+      }
+      .product-card {
+        display: flex;
+        flex-direction: row;
+        gap: 4.5rem;
+        align-items: flex-start;
+        margin-bottom: 2.5rem;
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      .dish-image {
+        width: 480px;
+        height: 480px;
+        min-width: 480px;
+        min-height: 480px;
+        max-width: 480px;
+        max-height: 480px;
+        object-fit: cover;
+        border-radius: 18px;
+        background: var(--secondary-color);
+        flex-shrink: 0;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+        display: block;
+      }
+      .dish-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-width: 0;
+        max-width: 100%;
+      }
+      .dish-title {
+        font-size: 2.7rem;
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 0.7rem;
+        margin-top: 0;
+        word-break: break-word;
+        max-width: 100%;
+        min-height: 3.5rem;
+        line-height: 1.2;
+      }
+      .dish-meta {
+        font-size: 1.1rem;
+        color: var(--dark-gray);
+        margin-bottom: 1.2rem;
+        min-height: 1.5rem;
+      }
+      .dish-description {
+        font-size: 1.25rem;
+        margin-bottom: 1.7rem;
+        color: var(--text-color);
+        word-break: break-word;
+        min-height: 3.5rem;
+        max-width: 100%;
+      }
+      .dish-actions {
+        display: flex;
+        gap: 18px;
+        margin-bottom: 0.5rem;
+      }
+      .action-btn {
+        background: var(--light-gray);
+        color: var(--primary-color);
+        border: none;
+        border-radius: 4px;
+        padding: 0.6rem 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.2s;
+      }
+      .action-btn.liked {
+        background: var(--primary-color);
+        color: var(--white);
+      }
+      .like-count,
+      .dislike-count {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+      .comments-section {
+        background: var(--light-gray);
+        border-radius: 12px;
+        padding: 1.2rem 1.5rem;
+        margin-top: 2.5rem;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .section-title {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+      }
+      .comment-form {
+        margin-bottom: 1.2rem;
+      }
+      .comment-input {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 0.8rem;
+        border: 1px solid var(--secondary-color);
+        border-radius: 4px;
+        font-size: 1rem;
+        margin-bottom: 0.7rem;
+        min-height: 70px;
+        resize: vertical;
+        background: var(--white);
+      }
+      .submit-comment {
+        background: var(--primary-color);
+        color: var(--white);
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .submit-comment:hover {
+        background: #c05e0c;
+      }
+      .comments-list {
+        margin-top: 1rem;
+      }
+      .comment {
+        background: var(--white);
+        border-radius: 8px;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+        padding: 1rem 1.2rem;
+        margin-bottom: 1rem;
+      }
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+      .comment-author {
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+      .comment-date {
+        font-size: 0.95rem;
+        color: var(--dark-gray);
+      }
+      .comment-text {
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+      }
+      .login-message {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-weight: bold;
+      }
+      .loading {
+        text-align: center;
+        color: var(--dark-gray);
+        padding: 1.5rem 0;
+      }
+      .back-link {
+        display: inline-block;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1rem;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      /* Modal */
+      .modal-bg {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.45);
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-bg.active {
+        display: flex;
+      }
+      .modal-content {
+        background: var(--white);
+        border-radius: 12px;
+        max-width: 600px;
+        width: 95vw;
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 2rem 1.5rem 1.5rem 1.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        position: relative;
+      }
+      .modal-close {
+        position: absolute;
+        top: 12px;
+        right: 18px;
+        background: none;
+        border: none;
+        font-size: 1.6rem;
+        color: var(--primary-color);
+        cursor: pointer;
+      }
+      .modal-title {
+        font-size: 1.3rem;
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 1.2rem;
+      }
+      /* Footer */
+      footer {
+        background: var(--primary-color);
+        color: var(--white);
+        padding: 1.2rem 0 0.5rem 0;
+        text-align: center;
+        margin-top: 2rem;
+        flex-shrink: 0;
+      }
+      .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.7rem;
+      }
+      .footer-icons {
+        margin: 0.5rem 0;
+        display: flex;
+        gap: 1.2rem;
+        justify-content: center;
+      }
+      .footer-icons a {
+        color: var(--white);
+        font-size: 1.6rem;
+        transition: color 0.2s;
+      }
+      .footer-icons a:hover {
+        color: #333;
+      }
+      .footer-rights {
+        font-size: 0.95rem;
+        color: var(--white);
+        opacity: 0.8;
+        margin-top: 0.5rem;
+      }
+      /* Responsivo */
+      @media (max-width: 1400px) {
+        .container {
+          max-width: 98vw;
+          min-width: 0;
+        }
+        .product-card {
+          gap: 2rem;
+        }
+        .dish-image {
+          width: 320px;
+          height: 320px;
+          min-width: 320px;
+          min-height: 320px;
+          max-width: 320px;
+          max-height: 320px;
+        }
+      }
+      @media (max-width: 1100px) {
+        .container {
+          min-width: 0;
+        }
+        .product-card {
+          flex-direction: column;
+          gap: 1.5rem;
+          align-items: stretch;
+        }
+        .dish-image {
+          width: 100%;
+          height: 260px;
+          min-width: 0;
+          min-height: 0;
+          max-width: 100%;
+          max-height: 260px;
+          margin-bottom: 1rem;
+        }
+        .comments-section {
+          max-width: 100%;
+        }
+      }
+      @media (max-width: 600px) {
+        .container {
+          padding: 0.5rem;
+        }
+        .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+        .product-card {
+          padding: 0;
+        }
+      }
+      .edit-comment-btn {
+        background: var(--primary-color);
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 0.2rem 0.8rem;
+        font-size: 0.95rem;
+        cursor: pointer;
+        margin-left: 0.5rem;
+        transition: background 0.2s;
+      }
+      .edit-comment-btn:hover {
+        background: #c05e0c;
+      }
+    </style>
+    <!-- Ícones Font Awesome CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">Sabor do Brasil</div>
+      <div class="nav-buttons" id="nav-buttons">
+        <button id="login-btn" onclick="window.location.href='/login.html'">
+          Login
+        </button>
+        <button
+          id="register-btn"
+          onclick="window.location.href='/Cadastro.html'"
+        >
+          Cadastrar
+        </button>
+      </div>
+    </nav>
+    <div class="container">
+      <a href="/index.html" class="back-link">&larr; Voltar para os pratos</a>
+      <div class="product-card">
+        <img id="dish-image" class="dish-image" src="" alt="Imagem do prato" />
+        <div class="dish-info">
+          <div class="dish-title" id="dish-title"></div>
+          <div class="dish-meta" id="dish-meta"></div>
+          <div class="dish-description" id="dish-description"></div>
+          <div class="dish-actions">
+            <button class="action-btn like-btn" id="like-btn">
+              <i class="fa-regular fa-heart" id="like-icon"></i>
+              <span class="like-count" id="like-count">0</span>
+            </button>
+            <button class="action-btn dislike-btn" id="dislike-btn">
+              <i class="fa-regular fa-thumbs-down" id="dislike-icon"></i>
+              <span class="dislike-count" id="dislike-count">0</span>
+            </button>
+            <button
+              id="delete-post-btn"
+              style="display:none; background:#dc3545; color:#fff; border:none; border-radius:6px; padding:0.6rem 1.2rem; font-weight:bold; cursor:pointer;"
+            >
+              <i class="fa fa-trash"></i> Apagar publicação
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="comments-section">
+        <div class="section-title">Comentários</div>
+        <div class="login-message" id="login-message" style="display: none">
+          Você precisa estar logado para comentar.
+          <a href="/login.html">Faça login</a> ou
+          <a href="/Cadastro.html">cadastre-se</a>.
+        </div>
+        <form class="comment-form" id="comment-form" style="display: none">
+          <textarea
+            class="comment-input"
+            id="comment-input"
+            placeholder="Adicione seu comentário..."
+          ></textarea>
+          <button type="submit" class="submit-comment">
+            Enviar Comentário
+          </button>
+        </form>
+        <div class="comments-list" id="comments-list">
+          <div class="loading">Carregando comentários...</div>
+        </div>
+        <button
+          id="show-all-comments"
+          style="
+            display: none;
+            margin: 1rem auto 0 auto;
+            display: block;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+          "
+        >
+          Ver outros comentários
+        </button>
+      </div>
+    </div>
+    <!-- Modal de comentários -->
+    <div class="modal-bg" id="modal-bg">
+      <div class="modal-content">
+        <button class="modal-close" id="modal-close" title="Fechar">
+          &times;
+        </button>
+        <div class="modal-title">Todos os comentários</div>
+        <div class="comments-list" id="modal-comments-list"></div>
+      </div>
+    </div>
+    <template id="comment-template">
+      <div class="comment">
+        <div class="comment-header">
+          <span class="comment-author"></span>
+          <span class="comment-date"></span>
+        </div>
+        <div class="comment-text"></div>
+      </div>
+    </template>
+    <footer>
+      <div class="footer-content">
+        <div style="font-size: 1.3rem; font-weight: bold">Sabor Brasil</div>
+        <div class="footer-icons">
+          <a href="https://instagram.com" target="_blank" title="Instagram"
+            ><i class="fab fa-instagram"></i
+          ></a>
+          <a href="https://x.com" target="_blank" title="X"
+            ><i class="fab fa-x-twitter"></i
+          ></a>
+          <a href="https://facebook.com" target="_blank" title="Facebook"
+            ><i class="fab fa-facebook"></i
+          ></a>
+        </div>
+        <div class="footer-rights">
+          Todos os direitos reservados &copy; 2025
+        </div>
+      </div>
+    </footer>
+    <script>
+      // Função para obter o parâmetro da URL
+      function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+
+      // Estado de login
+      let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      let currentUserId = localStorage.getItem("userId");
+      let currentUserName = localStorage.getItem("userName");
+      let liked = false;
+      let disliked = false;
+      let allComments = [];
+
+      // Navbar dinâmica (mantém igual)
+      function updateNavbar() {
+        const navButtons = document.getElementById("nav-buttons");
+        navButtons.innerHTML = "";
+        if (isLoggedIn) {
+          const homeBtn = document.createElement("a");
+          homeBtn.className = "home-btn";
+          homeBtn.innerHTML = '<i class="fa fa-home"></i>';
+          homeBtn.href = "/index.html";
+          navButtons.appendChild(homeBtn);
+
+          const logoutBtn = document.createElement("button");
+          logoutBtn.id = "logout-btn";
+          logoutBtn.innerHTML = "Sair";
+          logoutBtn.onclick = () => {
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("userName");
+            window.location.reload();
+          };
+          navButtons.appendChild(logoutBtn);
+        } else {
+          const loginBtn = document.createElement("button");
+          loginBtn.id = "login-btn";
+          loginBtn.innerHTML = "Login";
+          loginBtn.onclick = () => {
+            const currentUrl = window.location.pathname + window.location.search;
+            window.location.href = `/login.html?returnUrl=${encodeURIComponent(currentUrl)}`;
+          };
+          navButtons.appendChild(loginBtn);
+
+          const registerBtn = document.createElement("button");
+          registerBtn.id = "register-btn";
+          registerBtn.innerHTML = "Cadastrar";
+          registerBtn.onclick = () => (window.location.href = "/Cadastro.html");
+          navButtons.appendChild(registerBtn);
+        }
+      }
+      updateNavbar();
+
+      // Elementos
+      const dishImage = document.getElementById("dish-image");
+      const dishTitle = document.getElementById("dish-title");
+      const dishMeta = document.getElementById("dish-meta");
+      const dishDescription = document.getElementById("dish-description");
+      const likeBtn = document.getElementById("like-btn");
+      const likeIcon = document.getElementById("like-icon");
+      const likeCount = document.getElementById("like-count");
+      const dislikeBtn = document.getElementById("dislike-btn");
+      const dislikeIcon = document.getElementById("dislike-icon");
+      const dislikeCount = document.getElementById("dislike-count");
+      const loginMessage = document.getElementById("login-message");
+      const commentForm = document.getElementById("comment-form");
+      const commentInput = document.getElementById("comment-input");
+      const commentsList = document.getElementById("comments-list");
+      const commentTemplate = document.getElementById("comment-template");
+      const showAllBtn = document.getElementById("show-all-comments");
+      const modalBg = document.getElementById("modal-bg");
+      const modalClose = document.getElementById("modal-close");
+      const modalCommentsList = document.getElementById("modal-comments-list");
+      const deleteBtn = document.getElementById("delete-post-btn");
+
+      // Obter id do prato da URL
+      const pratoId = getQueryParam("id");
+      if (!pratoId) {
+        document.querySelector(".container").innerHTML =
+          "<div class='loading'>Prato não encontrado.</div>";
+        throw new Error("ID do prato não informado.");
+      }
+
+      // Exibe/esconde formulário de comentário conforme login
+      function updateCommentForm() {
+        if (isLoggedIn) {
+          loginMessage.style.display = "none";
+          commentForm.style.display = "block";
+        } else {
+          loginMessage.style.display = "block";
+          commentForm.style.display = "none";
+        }
+      }
+      updateCommentForm();
+
+      // Carregar detalhes do prato
+      async function loadDish() {
+        try {
+          const res = await fetch(`/api/publicacoes/Listar`);
+          const pratos = await res.json();
+          const prato = pratos.find((p) => p.idPost == pratoId);
+          if (!prato) {
+            dishTitle.textContent = "Prato não encontrado.";
+            return;
+          }
+          dishImage.src =
+            prato.imagem ||
+            "https://via.placeholder.com/600x320?text=Sem+Imagem";
+          dishImage.alt = prato.nome;
+          dishTitle.textContent = prato.nome;
+          
+          // Formatar localização
+          let locationText = "";
+          if (prato.local && prato.local.trim()) {
+            locationText += prato.local;
+          }
+          if (prato.cidade && prato.cidade.trim()) {
+            if (locationText) locationText += " - ";
+            locationText += prato.cidade;
+          }
+          if (prato.estado && prato.estado.trim()) {
+            if (locationText) locationText += ", ";
+            locationText += prato.estado;
+          }
+          
+          if (!locationText) {
+            locationText = "Local não informado";
+          }
+          
+          dishMeta.textContent = `Publicado por: ${
+            prato.autor || prato.Autor || "Desconhecido"
+          } em ${formatDate(prato.dataPublicao)} • ${locationText}`;
+          dishDescription.textContent = prato.descricao;
+
+          // Exibir botão de deletar para o autor do prato
+          if (isLoggedIn && String(prato.usuarioId || prato.UsuarioId) === String(currentUserId)) {
+            deleteBtn.style.display = "inline-block";
+            deleteBtn.onclick = async () => {
+              if (confirm("Tem certeza que deseja apagar esta publicação?")) {
+                const res = await fetch(`/api/publicacoes/Deletar/${prato.idPost}?usuarioId=${currentUserId}`, {
+                  method: "DELETE"
+                });
+                if (res.ok) {
+                  alert("Publicação removida com sucesso!");
+                  window.location.href = "/index.html";
+                } else {
+                  alert("Erro ao remover publicação.");
+                }
+              }
+            };
+          } else {
+            deleteBtn.style.display = "none";
+          }
+        } catch {
+          dishTitle.textContent = "Erro ao carregar prato.";
+        }
+      }
+
+      // Função para verificar se o usuário já curtiu
+      async function userLiked() {
+        if (!isLoggedIn) return false;
+        const res = await fetch(
+          `/api/publicacoes/UserLiked?postId=${pratoId}&userId=${currentUserId}`
+        );
+        if (!res.ok) return false;
+        const data = await res.json();
+        return data.liked;
+      }
+
+      // Função para verificar se o usuário já deu dislike
+      async function userDisliked() {
+        if (!isLoggedIn) return false;
+        const res = await fetch(
+          `/api/publicacoes/UserDisliked?postId=${pratoId}&userId=${currentUserId}`
+        );
+        if (!res.ok) return false;
+        const data = await res.json();
+        return data.disliked;
+      }
+
+      // Carregar likes e dislikes
+      async function loadLikes() {
+        try {
+          const likesData = await fetch(
+            `/api/publicacoes/LikesCount/${pratoId}`
+          ).then((r) => r.json());
+          likeCount.textContent = likesData.likes ?? 0;
+
+          const dislikesData = await fetch(
+            `/api/publicacoes/DislikesCount/${pratoId}`
+          ).then((r) => r.json());
+          dislikeCount.textContent = dislikesData.dislikes ?? 0;
+        } catch {
+          likeCount.textContent = 0;
+          dislikeCount.textContent = 0;
+        }
+      }
+
+      // Like/Deslike
+      likeBtn.addEventListener("click", async () => {
+        if (!isLoggedIn) {
+          alert("Você precisa estar logado para curtir.");
+          return;
+        }
+
+        // Sempre consulte o backend para saber se está curtido
+        let likedNow = await userLiked(pratoId, currentUserId); // ou userLiked(prato.idPost, currentUserId) no index.html
+
+        if (!likedNow) {
+          // Curtir
+          const res = await fetch("/api/publicacoes/Like", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idPost: pratoId, idUsuario: currentUserId }),
+          });
+          if (res.ok) {
+            likeBtn.classList.add("liked");
+            likeIcon.classList.remove("fa-regular");
+            likeIcon.classList.add("fa-solid");
+            // Remover estado ativo do dislike
+            dislikeBtn.classList.remove("liked");
+            dislikeIcon.classList.remove("fa-solid");
+            dislikeIcon.classList.add("fa-regular");
+            await loadLikes();
+          } else {
+            alert("Você já curtiu esse prato.");
+          }
+        } else {
+          // Remover like
+          const res = await fetch("/api/publicacoes/Like", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idPost: pratoId, idUsuario: currentUserId }),
+          });
+          if (res.ok) {
+            likeBtn.classList.remove("liked");
+            likeIcon.classList.remove("fa-solid");
+            likeIcon.classList.add("fa-regular");
+            await loadLikes();
+          } else {
+            alert("Erro ao remover like.");
+          }
+        }
+      });
+
+      dislikeBtn.addEventListener("click", async () => {
+        if (!isLoggedIn) {
+          alert("Você precisa estar logado para descurtir.");
+          return;
+        }
+
+        // Sempre consulte o backend para saber se está descurtido
+        let dislikedNow = await userDisliked();
+
+        if (!dislikedNow) {
+          // Descurtir
+          const res = await fetch("/api/publicacoes/Dislike", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idPost: pratoId, idUsuario: currentUserId }),
+          });
+          if (res.ok) {
+            dislikeBtn.classList.add("liked");
+            dislikeIcon.classList.remove("fa-regular");
+            dislikeIcon.classList.add("fa-solid");
+            // Remover estado ativo do like
+            likeBtn.classList.remove("liked");
+            likeIcon.classList.remove("fa-solid");
+            likeIcon.classList.add("fa-regular");
+            await loadLikes();
+          } else {
+            alert("Você já descurtiu esse prato.");
+          }
+        } else {
+          // Remover dislike
+          const res = await fetch("/api/publicacoes/Dislike", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idPost: pratoId, idUsuario: currentUserId }),
+          });
+          if (res.ok) {
+            dislikeBtn.classList.remove("liked");
+            dislikeIcon.classList.remove("fa-solid");
+            dislikeIcon.classList.add("fa-regular");
+            await loadLikes();
+          } else {
+            alert("Erro ao remover dislike.");
+          }
+        }
+      });
+
+      // Carregar comentários
+      async function loadComments() {
+        commentsList.innerHTML = '<div class="loading">Carregando comentários...</div>';
+        showAllBtn.style.display = "none";
+        try {
+          const res = await fetch(`/api/comentarios?postId=${pratoId}`);
+          const comments = await res.json();
+          allComments = comments;
+          commentsList.innerHTML = "";
+          if (!comments.length) {
+            commentsList.innerHTML = '<div class="loading">Nenhum comentário ainda.</div>';
+            return;
+          }
+          // Exibe até 3 comentários
+          comments.slice(0, 3).forEach((comment) => {
+            const c = commentTemplate.content.cloneNode(true);
+            c.querySelector(".comment-author").textContent =
+              comment.nomeUsuario || "Usuário";
+            c.querySelector(".comment-date").textContent = formatDate(
+              comment.data || comment.created_At || new Date()
+            );
+            c.querySelector(".comment-text").textContent = comment.descricao;
+            // Corrigido: compara como string para garantir igualdade
+            if (isLoggedIn && String(comment.Id_Usuario || comment.id_Usuario) === String(currentUserId)) {
+              const editBtn = document.createElement("button");
+              editBtn.textContent = "Editar";
+              editBtn.className = "edit-comment-btn";
+              editBtn.style.marginLeft = "10px";
+              editBtn.onclick = function() {
+                // Busca o .comment-text dentro do mesmo comentário do botão
+                const commentTextElem = this.closest('.comment').querySelector('.comment-text');
+                showEditComment(comment, commentTextElem);
+              };
+              c.querySelector(".comment-header").appendChild(editBtn);
+            }
+            commentsList.appendChild(c);
+          });
+          if (comments.length > 3) {
+            showAllBtn.style.display = "block";
+          }
+        } catch (err) {
+          commentsList.innerHTML = '<div class="loading">Erro ao carregar comentários.</div>';
+        }
+      }
+
+      // Mostrar todos os comentários no modal
+      showAllBtn.addEventListener("click", () => {
+        modalCommentsList.innerHTML = "";
+        allComments.forEach((comment) => {
+          const c = commentTemplate.content.cloneNode(true);
+          c.querySelector(".comment-author").textContent =
+            comment.nomeUsuario || "Usuário";
+          c.querySelector(".comment-date").textContent = formatDate(
+            comment.data || comment.created_At || new Date()
+          );
+          c.querySelector(".comment-text").textContent = comment.descricao;
+          modalCommentsList.appendChild(c);
+        });
+        modalBg.classList.add("active");
+      });
+      modalClose.addEventListener("click", () => {
+        modalBg.classList.remove("active");
+      });
+      modalBg.addEventListener("click", (e) => {
+        if (e.target === modalBg) modalBg.classList.remove("active");
+      });
+
+      // Enviar comentário
+      commentForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!commentInput.value.trim()) {
+          alert("Digite seu comentário.");
+          return;
+        }
+        try {
+          const res = await fetch("/api/comentarios", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              descricao: commentInput.value,
+              id_usuario: currentUserId,
+              post_id: pratoId,
+            }),
+          });
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.message || "Erro ao comentar.");
+          }
+          commentInput.value = "";
+          await loadComments();
+        } catch (err) {
+          alert("Erro ao enviar comentário.");
+        }
+      });
+
+      // Formatar data
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return (
+          date.toLocaleDateString("pt-BR") +
+          " às " +
+          date.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        );
+      }
+
+      // Inicialização
+      document.addEventListener("DOMContentLoaded", async () => {
+        await loadDish();
+        await loadLikes();
+        liked = await userLiked();
+        disliked = await userDisliked();
+        
+        if (liked) {
+          likeBtn.classList.add("liked");
+          likeIcon.classList.remove("fa-regular");
+          likeIcon.classList.add("fa-solid");
+        } else {
+          likeBtn.classList.remove("liked");
+          likeIcon.classList.remove("fa-solid");
+          likeIcon.classList.add("fa-regular");
+        }
+
+        if (disliked) {
+          dislikeBtn.classList.add("liked");
+          dislikeIcon.classList.remove("fa-regular");
+          dislikeIcon.classList.add("fa-solid");
+        } else {
+          dislikeBtn.classList.remove("liked");
+          dislikeIcon.classList.remove("fa-solid");
+          dislikeIcon.classList.add("fa-regular");
+        }
+        
+        await loadComments();
+        updateCommentForm();
+      });
+
+      function showEditComment(comment, commentTextElem) {
+  const originalText = comment.descricao;
+  const textarea = document.createElement("textarea");
+  textarea.value = originalText;
+  textarea.style.width = "100%";
+  textarea.style.minHeight = "60px";
+  commentTextElem.replaceWith(textarea);
+
+  const saveBtn = document.createElement("button");
+  saveBtn.textContent = "Salvar";
+  saveBtn.className = "submit-comment";
+  saveBtn.style.marginTop = "8px";
+
+  textarea.parentNode.appendChild(saveBtn);
+
+  saveBtn.onclick = async () => {
+    const novoTexto = textarea.value.trim();
+    if (!novoTexto) {
+      alert("O comentário não pode ficar vazio.");
+      return;
+    }
+    saveBtn.disabled = true; // Evita múltiplos envios
+    try {
+      const commentId = comment.IdComentario || comment.idComentario;
+      const res = await fetch(`/api/comentarios/${commentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          Descricao: novoTexto,
+          Id_Usuario: Number(currentUserId) // <-- ENVIE COMO NÚMERO
+        }),
+      });
+      if (res.ok) {
+        await loadComments();
+      } else {
+        alert("Erro ao editar comentário.");
+      }
+    } catch {
+      alert("Erro ao editar comentário.");
+    }
+    saveBtn.disabled = false;
+  };
+}
+    </script>
+  </body>
+</html>

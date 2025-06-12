@@ -1,0 +1,30 @@
+@model SaborBrasil.Models.Usuario
+
+<form asp-controller="Usuario" asp-action="Cadastrar" method="post">
+    <div class="form-group">
+        <label for="nome">Nome</label>
+        <input type="text" name="Nome" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="cpf">CPF</label>
+        <input type="text" name="Cpf" class="form-control" required maxlength="11" />
+    </div>
+
+    <div class="form-group">
+        <label for="telefone">Telefone</label>
+        <input type="tel" name="Telefone" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" name="Email" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="senha">Senha</label>
+        <input type="password" name="Senha" class="form-control" required minlength="8" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Cadastrar</button>
+</form>

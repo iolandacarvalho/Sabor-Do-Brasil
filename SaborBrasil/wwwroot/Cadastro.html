@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Cadastro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+
+        .btn-submit {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #3a7bc8;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+
+        .password-hint {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.95rem;
+            margin-top: 4px;
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        .warning-message {
+            color: #e6b800; /* amarelo */
+            font-size: 0.95rem;
+            margin-top: 4px;
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        .form-group input.invalid {
+            border-color: #dc3545;
+        }
+
+        .form-group input.warning {
+            border-color: #e6b800;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+        }
+
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--secondary-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background: var(--white);
+            cursor: pointer;
+        }
+
+        .form-group input[type="file"]:hover {
+            border-color: var(--primary-color);
+        }
+
+        .form-group input[type="file"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(217, 112, 20, 0.2);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            width: 100%;
+            padding: 0.8rem;
+            padding-right: 38px;
+            border: 1px solid var(--secondary-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+            font-size: 1.2rem;
+        }
+
+        .photo-preview-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+</head>
+<body>
+    <div class="container">
+       
+        <h1>Cadastre-se</h1>
+        <form id="register-form" action="/Usuario/Cadastrar" method="post" autocomplete="off">
+            <div class="form-group">
+                <label for="nome" class="required-field">Nome Completo</label>
+                <input type="text" id="nome" name="Nome" required placeholder="Digite seu nome completo">
+                <div class="error-message" id="nome-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="cpf" class="required-field">CPF</label>
+                <input type="text" id="cpf" name="Cpf" required placeholder="Digite seu CPF (somente números)" maxlength="11">
+                <div class="error-message" id="cpf-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="telefone" class="required-field">Telefone</label>
+                <input type="tel" id="telefone" name="Telefone" required placeholder="Digite seu telefone com DDD">
+                <div class="error-message" id="telefone-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="email" class="required-field">E-mail</label>
+                <input type="email" id="email" name="Email" required placeholder="Digite seu e-mail">
+                <div class="error-message" id="email-error"></div>
+            </div>
+            <div class="form-group" style="position: relative;">
+                <label for="senha" class="required-field">Senha</label>
+                <div class="password-container">
+                    <input type="password" id="senha" name="Senha" required placeholder="Digite sua senha">
+                    <span id="toggleSenha" class="password-toggle">
+                        <i class="fa-regular fa-eye" id="senha-eye"></i>
+                    </span>
+                </div>
+                <div class="error-message" id="senha-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="foto-perfil">Foto de Perfil (Opcional)</label>
+                <input type="file" id="foto-perfil" name="fotoPerfil" accept="image/*" class="form-control">
+                <div class="photo-preview-container" style="margin-top: 10px; text-align: center; display: none;">
+                    <img id="photo-preview" src="" alt="Pré-visualização" style="max-width: 150px; max-height: 150px; border-radius: 50%; border: 2px solid var(--primary-color);">
+                </div>
+                <div class="error-message" id="foto-error"></div>
+            </div>
+            <button type="submit" id="register-btn" class="btn-submit">Cadastrar</button>
+        </form>
+        <div id="form-success" style="color:green; margin-top:1rem; display:none;"></div>
+    </div>
+    <script>
+        // Função para validar senha forte
+        function isStrongPassword(senha) {
+            // Pelo menos 8 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 símbolo
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(senha);
+        }
+
+        // Função para validar CPF simples (apenas 11 dígitos)
+        function isValidCPF(cpf) {
+            return /^\d{11}$/.test(cpf);
+        }
+
+        // Função para validar telefone (apenas 11 dígitos)
+        function isValidTelefone(telefone) {
+            return /^\d{11}$/.test(telefone);
+        }
+
+        // Pré-visualização da foto de perfil
+        document.getElementById('foto-perfil').addEventListener('change', function() {
+            const file = this.files[0];
+            const previewContainer = document.querySelector('.photo-preview-container');
+            const preview = document.getElementById('photo-preview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+
+        // Limpar mensagens de erro e aviso
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(e => e.textContent = '');
+            document.querySelectorAll('.warning-message').forEach(e => e.textContent = '');
+            document.querySelectorAll('.form-group input').forEach(i => {
+                i.classList.remove('invalid');
+                i.classList.remove('warning');
+            });
+        }
+
+        document.getElementById('register-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            clearErrors();
+            let valid = true;
+
+            const nome = document.getElementById('nome').value.trim();
+            const cpf = document.getElementById('cpf').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value;
+
+            // Validação de campos obrigatórios
+            if (!nome) {
+                document.getElementById('nome-error').textContent = "Esse campo é obrigatório";
+                document.getElementById('nome').classList.add('invalid');
+                valid = false;
+            }
+            // CPF obrigatório e 11 dígitos
+            if (!cpf) {
+                document.getElementById('cpf-error').textContent = "Esse campo é obrigatório";
+                document.getElementById('cpf').classList.add('invalid');
+                valid = false;
+            } else if (!isValidCPF(cpf)) {
+                document.getElementById('cpf-error').textContent = "Número de cpf inválido";
+                document.getElementById('cpf-error').className = "warning-message";
+                document.getElementById('cpf').classList.add('warning');
+                valid = false;
+            }
+            // Telefone obrigatório e 11 dígitos
+            if (!telefone) {
+                document.getElementById('telefone-error').textContent = "Esse campo é obrigatório";
+                document.getElementById('telefone').classList.add('invalid');
+                valid = false;
+            } else if (!isValidTelefone(telefone)) {
+                document.getElementById('telefone-error').textContent = "Número de telefone inválido";
+                document.getElementById('telefone-error').className = "warning-message";
+                document.getElementById('telefone').classList.add('warning');
+                valid = false;
+            }
+            if (!email) {
+                document.getElementById('email-error').textContent = "Esse campo é obrigatório";
+                document.getElementById('email').classList.add('invalid');
+                valid = false;
+            }
+            if (!senha) {
+                document.getElementById('senha-error').textContent = "Esse campo é obrigatório";
+                document.getElementById('senha').classList.add('invalid');
+                valid = false;
+            } else if (!isStrongPassword(senha)) {
+                document.getElementById('senha-error').textContent = "Essa senha é inválida, pois apresenta baixos padrões de segurança";
+                document.getElementById('senha').classList.add('invalid');
+                valid = false;
+            }
+
+            if (!valid) return;
+
+            // Verificar se e-mail ou CPF já existem no banco
+            let emailExists = false;
+            let cpfExists = false;
+            try {
+                // Verifica e-mail
+                const resEmail = await fetch(`/Usuario/ExisteEmail?email=${encodeURIComponent(email)}`);
+                if (resEmail.ok) {
+                    const data = await resEmail.json();
+                    if (data.exists) {
+                        emailExists = true;
+                        document.getElementById('email-error').textContent = "Erro! Esse email já existe!";
+                        document.getElementById('email-error').className = "error-message";
+                        document.getElementById('email').classList.add('invalid');
+                    }
+                }
+                // Verifica CPF
+                const resCpf = await fetch(`/Usuario/ExisteCpf?cpf=${encodeURIComponent(cpf)}`);
+                if (resCpf.ok) {
+                    const data = await resCpf.json();
+                    if (data.exists) {
+                        cpfExists = true;
+                        document.getElementById('cpf-error').textContent = "Erro! Esse CPF já está em uso!";
+                        document.getElementById('cpf-error').className = "error-message";
+                        document.getElementById('cpf').classList.add('invalid');
+                    }
+                }
+            } catch (err) {
+                // Se der erro na API, não bloqueia o cadastro, mas pode mostrar um alerta
+            }
+
+            if (emailExists || cpfExists) return;
+
+            // Se tudo ok, envia o formulário via fetch
+            try {
+                const formData = new FormData();
+                formData.append('Nome', nome);
+                formData.append('Cpf', cpf);
+                formData.append('Telefone', telefone);
+                formData.append('Email', email);
+                formData.append('Senha', senha);
+                
+                // Adicionar foto se selecionada
+                const fotoInput = document.getElementById('foto-perfil');
+                if (fotoInput.files[0]) {
+                    formData.append('fotoPerfil', fotoInput.files[0]);
+                }
+
+                const res = await fetch('/Usuario/Cadastrar', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (res.ok) {
+                    // Redireciona para index.html após cadastro
+                    window.location.href = "index.html";
+                } else {
+                    const data = await res.json();
+                    alert(data.message || "Erro ao cadastrar.");
+                }
+            } catch (err) {
+                alert("Erro ao conectar com o servidor.");
+            }
+        });
+
+        // Mostrar/ocultar senha
+        document.getElementById('toggleSenha').addEventListener('click', function() {
+            const senhaInput = document.getElementById('senha');
+            const eyeIcon = document.getElementById('senha-eye');
+            if (senhaInput.type === "password") {
+                senhaInput.type = "text";
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                senhaInput.type = "password";
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        });
+    </script>
+</body>
+</html>

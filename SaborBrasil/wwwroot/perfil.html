@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil do Usuário - Sabor do Brasil</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <style>
+        :root {
+            --primary-color: #d97014;
+            --secondary-color: #c2bebe;
+            --text-color: #333;
+            --light-color: #f5f5f5;
+            --white: #fff;
+            --dark-gray: #555;
+            --light-gray: #eee;
+            --black: #000000;
+            --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--light-color);
+            color: var(--text-color);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--white);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .home-btn {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            padding: 0.6rem 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .home-btn:hover {
+            background: #c05e0c;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            padding: 0.6rem 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+        }
+
+        .profile-photo-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            background: var(--light-gray);
+        }
+
+        .photo-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .photo-upload-btn:hover {
+            background: #c05e0c;
+        }
+
+        .profile-info {
+            margin-bottom: 2rem;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+        }
+
+        .upload-form {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--secondary-color);
+            border-radius: 4px;
+            background: var(--white);
+        }
+
+        .upload-btn {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .upload-btn:hover {
+            background: #c05e0c;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--dark-gray);
+            padding: 2rem 0;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Sabor do Brasil</div>
+        <div class="nav-buttons" id="nav-buttons">
+            <a href="/index.html" class="home-btn">
+                <i class="fa fa-home"></i>
+                Início
+            </a>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fa fa-sign-out-alt"></i>
+                Sair
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-card">
+            <div class="profile-photo-container">
+                <img id="profile-photo" class="profile-photo" src="" alt="Foto de perfil" />
+                <button class="photo-upload-btn" onclick="document.getElementById('photo-input').click()">
+                    <i class="fa fa-camera"></i>
+                </button>
+            </div>
+
+            <div class="profile-info">
+                <h1 class="profile-name" id="profile-name">Carregando...</h1>
+                <p class="profile-email" id="profile-email">carregando@email.com</p>
+            </div>
+
+            <div id="alert" class="alert"></div>
+
+            <form id="upload-form" class="upload-form">
+                <div class="form-group">
+                    <label for="photo-input">Alterar foto de perfil</label>
+                    <input type="file" id="photo-input" accept="image/*" style="display: none;" />
+                    <input type="file" id="photo-input-visible" accept="image/*" />
+                </div>
+                <button type="submit" class="upload-btn">
+                    <i class="fa fa-upload"></i>
+                    Enviar Foto
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Verificar se usuário está logado
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const currentUserId = localStorage.getItem("userId");
+        const currentUserName = localStorage.getItem("userName");
+        const currentUserEmail = localStorage.getItem("userEmail");
+        const currentUserPhoto = localStorage.getItem("userPhoto");
+
+        if (!isLoggedIn || !currentUserId) {
+            window.location.href = "/login.html";
+        }
+
+        // Elementos do DOM
+        const profilePhoto = document.getElementById("profile-photo");
+        const profileName = document.getElementById("profile-name");
+        const profileEmail = document.getElementById("profile-email");
+        const photoInput = document.getElementById("photo-input");
+        const photoInputVisible = document.getElementById("photo-input-visible");
+        const uploadForm = document.getElementById("upload-form");
+        const alertDiv = document.getElementById("alert");
+
+        // Carregar dados do perfil
+        function loadProfile() {
+            profileName.textContent = currentUserName || "Usuário";
+            profileEmail.textContent = currentUserEmail || "email@exemplo.com";
+            
+            if (currentUserPhoto) {
+                profilePhoto.src = currentUserPhoto;
+            } else {
+                profilePhoto.src = "https://via.placeholder.com/150x150?text=Sem+Foto";
+            }
+        }
+
+        // Mostrar alerta
+        function showAlert(message, type) {
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = "block";
+            
+            setTimeout(() => {
+                alertDiv.style.display = "none";
+            }, 5000);
+        }
+
+        // Upload de foto
+        uploadForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const file = photoInputVisible.files[0];
+            if (!file) {
+                showAlert("Por favor, selecione uma foto.", "error");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("userId", currentUserId);
+            formData.append("foto", file);
+
+            try {
+                const response = await fetch("/Usuario/UploadFotoPerfil", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert("Foto de perfil atualizada com sucesso!", "success");
+                    localStorage.setItem("userPhoto", data.fotoPerfil);
+                    profilePhoto.src = data.fotoPerfil;
+                    photoInputVisible.value = "";
+                } else {
+                    showAlert(data.message || "Erro ao atualizar foto de perfil.", "error");
+                }
+            } catch (error) {
+                showAlert("Erro ao conectar com o servidor.", "error");
+            }
+        });
+
+        // Sincronizar inputs de arquivo
+        photoInput.addEventListener("change", function() {
+            photoInputVisible.files = this.files;
+        });
+
+        photoInputVisible.addEventListener("change", function() {
+            photoInput.files = this.files;
+        });
+
+        // Função de logout
+        function logout() {
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userEmail");
+            localStorage.removeItem("userPhoto");
+            window.location.href = "/index.html";
+        }
+
+        // Inicialização
+        document.addEventListener("DOMContentLoaded", () => {
+            loadProfile();
+        });
+    </script>
+</body>
+</html> 
