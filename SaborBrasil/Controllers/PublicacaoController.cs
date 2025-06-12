@@ -60,7 +60,6 @@ public class PublicacaoController : ControllerBase
         try
         {
             Console.WriteLine("Iniciando listagem de publicações...");
-            
             var publicacoes = _context.Publicacoes.Where(pub => !pub.Excluido)
             .Join(_context.Usuarios,
                   pub => pub.UsuarioId,
@@ -76,11 +75,10 @@ public class PublicacaoController : ControllerBase
                       pub.Local,
                       pub.Cidade,
                       pub.Estado,
-                      Autor = user.Nome
+                      Autor = user.Email // Exibe o e-mail do autor
                   })
                 .OrderByDescending(p => p.DataPublicao)
                 .ToList();
-                
             Console.WriteLine($"Publicações encontradas: {publicacoes.Count}");
             return Ok(publicacoes);
         }
@@ -110,7 +108,7 @@ public class PublicacaoController : ControllerBase
                               Local = "",
                               Cidade = "",
                               Estado = "",
-                              Autor = user.Nome
+                              Autor = user.Email // Exibe o e-mail do autor
                           })
                         .OrderByDescending(p => p.DataPublicao)
                         .ToList();

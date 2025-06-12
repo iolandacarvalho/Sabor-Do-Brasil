@@ -6,7 +6,7 @@
     <title>Login - Sabor do Brasil</title>
     <style>
         :root {
-            --primary-color: #D97014;
+            --primary-color: #d97014;
             --secondary-color: #C2BEBE;
             --text-color: #333;
             --light-color: #f5f5f5;
@@ -200,6 +200,7 @@
                     localStorage.setItem('userId', data.idusuario);
                     localStorage.setItem("userName", data.nome);
                     localStorage.setItem("userPhoto", data.fotoPerfil || "");
+                    localStorage.setItem("userEmail", email); // Salva o e-mail do usuário
 
                     // Pegue o returnUrl da URL, se existir
                     const params = new URLSearchParams(window.location.search);

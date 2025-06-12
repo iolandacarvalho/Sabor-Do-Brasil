@@ -30,7 +30,7 @@ public class ComentariosController : ControllerBase
                   c.Data,
                   c.Post_Id,
                   c.Created_At,
-                  NomeUsuario = u.Nome // <-- Nome do usuário
+                  NomeUsuario = u.Email // Exibe o e-mail do usuário, já que não existe mais Nome
               })
             .ToListAsync();
 

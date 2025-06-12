@@ -13,61 +13,40 @@ public class UsuarioController : Controller
     }
 
     [HttpPost("Cadastrar")]
-    public IActionResult Cadastrar([FromForm] string Nome, [FromForm] string Cpf, [FromForm] string Senha, 
-                                  [FromForm] string Telefone, [FromForm] string Email, [FromForm] IFormFile? fotoPerfil)
+    public IActionResult Cadastrar([FromForm] string Email, [FromForm] string Senha, [FromForm] IFormFile? fotoPerfil)
     {
         try
         {
-            Console.WriteLine($"Cadastrar chamado - Nome: {Nome}, CPF: {Cpf}, Email: {Email}");
-            
-            // Validar campos obrigatórios
-            if (string.IsNullOrEmpty(Cpf) || string.IsNullOrEmpty(Senha) || string.IsNullOrEmpty(Telefone))
-            {
-                Console.WriteLine("Campos obrigatórios não preenchidos");
-                return BadRequest(new { message = "CPF, Senha e Telefone são obrigatórios." });
-            }
-
             // Criar objeto usuário
             var usuario = new Usuario
             {
-                Nome = Nome ?? "",
-                Cpf = Cpf,
-                Senha = Senha,
-                Telefone = Telefone,
                 Email = Email ?? "",
+                Senha = Senha,
                 CreatedAt = DateTime.Now
             };
 
             // Processar foto de perfil se fornecida
             if (fotoPerfil != null && fotoPerfil.Length > 0)
             {
-                Console.WriteLine($"Processando foto: {fotoPerfil.FileName}");
                 var uploads = Path.Combine("wwwroot/uploads/profiles");
                 if (!Directory.Exists(uploads))
                     Directory.CreateDirectory(uploads);
-
-                // Gera um nome único para a foto
                 var ext = Path.GetExtension(fotoPerfil.FileName);
                 var uniqueName = $"profile_{Guid.NewGuid()}{ext}";
                 var filePath = Path.Combine(uploads, uniqueName);
-
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     fotoPerfil.CopyTo(stream);
                 }
-
                 usuario.FotoPerfil = "/uploads/profiles/" + uniqueName;
-                Console.WriteLine($"Foto salva em: {usuario.FotoPerfil}");
             }
 
             _context.Usuarios.Add(usuario);
             _context.SaveChanges();
-            Console.WriteLine("Usuário cadastrado com sucesso!");
             return Ok(new { message = "Cadastro realizado com sucesso!" });
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro no cadastro: {ex.Message}");
             return BadRequest(new { message = $"Erro ao cadastrar: {ex.Message}" });
         }
     }
@@ -79,7 +58,7 @@ public class UsuarioController : Controller
             return BadRequest(new { message = "E-mail e senha são obrigatórios." });
 
         var usuarioExistente = _context.Usuarios
-            .FirstOrDefault(u => u.Email.ToLower() == usuario.Email.ToLower());
+            .FirstOrDefault(u => (u.Email ?? "").ToLower() == (usuario.Email ?? "").ToLower());
 
         if (usuarioExistente == null)
             return BadRequest(new { message = "Usuário não encontrado." });
@@ -87,11 +66,9 @@ public class UsuarioController : Controller
         if (usuarioExistente.Senha != usuario.Senha)
             return BadRequest(new { message = "Senha incorreta." });
 
-        // Retorne o idusuario e foto de perfil!
-        return Ok(new { 
-            message = "Login realizado com sucesso!",
+        // Retorne apenas idusuario e foto de perfil
+        return Ok(new {
             idusuario = usuarioExistente.IdUsuario,
-            nome = usuarioExistente.Nome,
             fotoPerfil = usuarioExistente.FotoPerfil
         });
     }
@@ -154,17 +131,7 @@ public class UsuarioController : Controller
         if (string.IsNullOrEmpty(email))
             return BadRequest(new { exists = false });
 
-        var existe = _context.Usuarios.Any(u => u.Email.ToLower() == email.ToLower());
-        return Ok(new { exists = existe });
-    }
-
-    [HttpGet("ExisteCpf")]
-    public IActionResult ExisteCpf([FromQuery] string cpf)
-    {
-        if (string.IsNullOrEmpty(cpf))
-            return BadRequest(new { exists = false });
-
-        var existe = _context.Usuarios.Any(u => u.Cpf == cpf);
+        var existe = _context.Usuarios.Any(u => u.Email != null && u.Email.ToLower() == email.ToLower());
         return Ok(new { exists = existe });
     }
 }
