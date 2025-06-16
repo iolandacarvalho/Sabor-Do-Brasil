@@ -13,7 +13,7 @@ public class UsuarioController : Controller
     }
 
     [HttpPost("Cadastrar")]
-    public IActionResult Cadastrar([FromForm] string Email, [FromForm] string Senha, [FromForm] IFormFile? fotoPerfil)
+    public IActionResult Cadastrar([FromForm] string Email, [FromForm] string Senha, [FromForm] string Nome, [FromForm] IFormFile? fotoPerfil)
     {
         try
         {
@@ -22,6 +22,7 @@ public class UsuarioController : Controller
             {
                 Email = Email ?? "",
                 Senha = Senha,
+                Nome = Nome,
                 CreatedAt = DateTime.Now
             };
 
@@ -66,9 +67,10 @@ public class UsuarioController : Controller
         if (usuarioExistente.Senha != usuario.Senha)
             return BadRequest(new { message = "Senha incorreta." });
 
-        // Retorne apenas idusuario e foto de perfil
+        // Retorne idusuario, nome e foto de perfil
         return Ok(new {
             idusuario = usuarioExistente.IdUsuario,
+            nome = usuarioExistente.Nome,
             fotoPerfil = usuarioExistente.FotoPerfil
         });
     }

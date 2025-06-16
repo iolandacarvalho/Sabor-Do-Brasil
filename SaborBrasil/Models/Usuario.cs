@@ -22,5 +22,8 @@ namespace SaborBrasil.Models
 
         [Column("created_at")] // Mapeia para a coluna "created_at"
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [Column("nome")] // Mapeia para a coluna "nome"
+        public string? Nome { get; set; }
     }
 }

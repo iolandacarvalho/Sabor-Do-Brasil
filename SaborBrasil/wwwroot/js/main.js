@@ -185,12 +185,31 @@ async function renderPublicationCard(prato) {
 // Manipular like
 async function handleLike(postId, likeAction, likeCount) {
   try {
-    const response = await fetch(`/api/publicacoes/Like/${postId}`, { method: "POST" });
-    if (!response.ok) throw new Error("Erro ao dar like");
-    const likes = await response.json();
-    likeCount.textContent = likes.total || 0;
+    const res = await fetch(`/api/publicacoes/LikePost`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        postId: postId,
+        userId: currentUserId,
+      }),
+    });
+    if (!res.ok) throw new Error("Erro ao dar like");
+    const data = await res.json();
     likeAction.classList.add("active");
-    dislikeAction.classList.remove("active");
+    const currentLikes = parseInt(likeCount.textContent) || 0;
+    likeCount.textContent = currentLikes + 1;
+    // Remover dislike se presente
+    const dislikeButton = likeAction.closest(".publication-card").querySelector(".dislike-action");
+    if (dislikeButton) {
+      dislikeButton.classList.remove("active");
+      const dislikeCount = dislikeButton.querySelector(".dislike-count");
+      const currentDislikes = parseInt(dislikeCount.textContent) || 0;
+      if (currentDislikes > 0) {
+        dislikeCount.textContent = currentDislikes - 1;
+      }
+    }
   } catch (error) {
     console.error(error);
   }
@@ -199,12 +218,31 @@ async function handleLike(postId, likeAction, likeCount) {
 // Manipular dislike
 async function handleDislike(postId, dislikeAction, dislikeCount) {
   try {
-    const response = await fetch(`/api/publicacoes/Dislike/${postId}`, { method: "POST" });
-    if (!response.ok) throw new Error("Erro ao dar dislike");
-    const dislikes = await response.json();
-    dislikeCount.textContent = dislikes.total || 0;
+    const res = await fetch(`/api/publicacoes/DislikePost`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        postId: postId,
+        userId: currentUserId,
+      }),
+    });
+    if (!res.ok) throw new Error("Erro ao dar dislike");
+    const data = await res.json();
     dislikeAction.classList.add("active");
-    likeAction.classList.remove("active");
+    const currentDislikes = parseInt(dislikeCount.textContent) || 0;
+    dislikeCount.textContent = currentDislikes + 1;
+    // Remover like se presente
+    const likeButton = dislikeAction.closest(".publication-card").querySelector(".like-action");
+    if (likeButton) {
+      likeButton.classList.remove("active");
+      const likeCount = likeButton.querySelector(".like-count");
+      const currentLikes = parseInt(likeCount.textContent) || 0;
+      if (currentLikes > 0) {
+        likeCount.textContent = currentLikes - 1;
+      }
+    }
   } catch (error) {
     console.error(error);
   }
@@ -215,60 +253,49 @@ function updateLoginInterface() {
   isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   currentUserId = localStorage.getItem("userId");
   if (isLoggedIn) {
-    loginBtn.style.display = "none";
-    userProfile.style.display = "block";
-    addDishBtn.style.display = "block";
-
-    // Carregar informações do usuário
-    const userEmailValue = localStorage.getItem("userEmail") || "";
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userProfile) userProfile.style.display = "block";
+    if (addDishBtn) addDishBtn.style.display = "block";
+    // Exibir foto de perfil no logo
     const userPhotoValue = localStorage.getItem("userPhoto");
-
-    userName.textContent = userEmailValue; // Exibe o e-mail na primeira coluna
-    userEmail.textContent = userEmailValue;
-
-    // Ocultar email se estiver vazio
-    if (!userEmailValue) {
-      userEmail.style.display = "none";
-    } else {
-      userEmail.style.display = "block";
+    if (companyLogo) companyLogo.style.display = "none";
+    if (userProfileLogo) {
+      userProfileLogo.src = userPhotoValue || "https://via.placeholder.com/180x180?text=Sem+Foto";
+      userProfileLogo.style.display = "block";
     }
-
-    if (userPhotoValue) {
-      userPhoto.src = userPhotoValue;
-    } else {
-      userPhoto.src = "https://via.placeholder.com/80x80?text=Sem+Foto";
-    }
-
-    // Adiciona handlers dos botões de perfil e logout
-    if (profileBtn) {
-      profileBtn.onclick = function() {
-        window.location.href = "/perfil.html";
-      };
-    }
-    if (logoutBtn) {
-      logoutBtn.onclick = function() {
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("userName");
-        localStorage.removeItem("userEmail");
-        localStorage.removeItem("userPhoto");
-        window.location.href = "/index.html";
-      };
-    }
+    // Exibir nome do usuário na área de perfil
+    const userNameValue = localStorage.getItem("userName") || "";
+    if (userEmail) userEmail.textContent = userNameValue;
+    // Botão perfil
+    if (profileBtn) profileBtn.onclick = function() {
+      window.location.href = "/perfil.html";
+    };
+    // Botão logout
+    if (logoutBtn) logoutBtn.onclick = function() {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userPhoto");
+      window.location.href = "/index.html";
+    };
+    // Botão cadastrar prato
+    if (addDishBtn) addDishBtn.onclick = function() {
+      window.location.href = "/Cadastro de Produto.html";
+    };
   } else {
-    loginBtn.style.display = "block";
-    userProfile.style.display = "none";
-    addDishBtn.style.display = "none";
-    userName.textContent = "";
-    userEmail.textContent = "";
+    if (loginBtn) loginBtn.style.display = "block";
+    if (userProfile) userProfile.style.display = "none";
+    if (addDishBtn) addDishBtn.style.display = "none";
+    // Exibir logo da empresa
+    if (companyLogo) companyLogo.style.display = "block";
+    if (userProfileLogo) userProfileLogo.style.display = "none";
   }
 }
 
-// Chama ao carregar a página
-window.addEventListener('DOMContentLoaded', updateLoginInterface);
-// Atualiza interface se localStorage mudar (ex: login/cadastro em outra aba)
+window.addEventListener('DOMContentLoaded', () => {
+  updateLoginInterface();
+  loadGeneralStats();
+  loadDishes();
+});
 window.addEventListener('storage', updateLoginInterface);
-
-// Carregar estatísticas e pratos ao iniciar
-loadGeneralStats();
-loadDishes();
